@@ -30,7 +30,6 @@ export class Task {
   @Field(() => User)
   owner: User;
 
-
   @OneToMany(() => Comment, (comment) => comment.task)
   comments: Comment[];
 }

@@ -1,11 +1,19 @@
-import { Resolver, Query, Args, Int, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Int,
+  Mutation,
+} from '@nestjs/graphql';
 import { Task } from './tasks.entity';
 import { TasksService } from './tasks.service';
 import { CreateTasksInput } from './dto/create-trask.input';
 
 @Resolver(() => Task)
 export class TasksResolver {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+  ) {}
 
   @Mutation(() => Task)
   createTask(
@@ -16,17 +24,17 @@ export class TasksResolver {
   }
 
   @Mutation(() => Task)
-  removeTask(@Args('id', { type: () => Int }) id: number): Promise<Task> {
+  deleteTask(@Args('id', { type: () => Int }) id: number): Promise<Task> {
     return this.tasksService.removeTask(id);
   }
 
   @Query(() => [Task])
-  tasks(): Promise<Task[]> {
-    return this.tasksService.getAllTasks();
+  async tasks(): Promise<Task[]> {
+    return await this.tasksService.getAllTasks();
   }
 
   @Query(() => Task)
-  getOneTask(@Args('id', { type: () => Int }) id: number): Promise<Task> {
-    return this.tasksService.getOneTask(id);
+  async getOneTask(@Args('id', { type: () => Int }) id: number): Promise<Task> {
+    return await this.tasksService.getOneTask(id);
   }
 }

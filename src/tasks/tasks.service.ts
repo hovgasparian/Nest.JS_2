@@ -25,15 +25,23 @@ export class TasksService {
   }
 
   async getAllTasks(): Promise<Task[]> {
-    return this.tasksRepository.find();
+    return await this.tasksRepository.find({
+      relations: ['owner'],
+    });
   }
 
   async getOneTask(id: number): Promise<Task> {
-    return this.tasksRepository.findOneOrFail({ where: { id } });
+    return await this.tasksRepository.findOneOrFail({
+      where: { id },
+      relations: ['owner'],
+    });
   }
 
   async removeTask(id: number): Promise<Task> {
-    const taskToRemove = this.tasksRepository.findOne({ where: { id } });
+    const taskToRemove = this.tasksRepository.findOne({
+      where: { id },
+      relations: ['owner'],
+    });
     if (!taskToRemove) {
       throw new Error(`Task with id: ${id} not found`);
     }

@@ -34,7 +34,7 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   deleteUser(id: Int!): User!
   createTask(createTasksInput: CreateTasksInput!): Task!
-  removeTask(id: Int!): Task!
+  deleteTask(id: Int!): Task!
   addComment(createCommentsInput: CreateCommentsInput!): Comment!
 }
 
