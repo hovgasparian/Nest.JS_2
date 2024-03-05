@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './users.model';
+import { User } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserInput } from './dto/create-user.input';
 
 @Injectable()
 export class UsersService {
@@ -10,8 +9,8 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  createUser(createUserInput: CreateUserInput): Promise<User> {
-    const user = this.usersRepository.create(createUserInput);
+  create(name: string, email: string): Promise<User> {
+    const user = this.usersRepository.create({ name, email, tasks: [] });
     return this.usersRepository.save(user);
   }
 
@@ -19,7 +18,18 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<User> {
     return this.usersRepository.findOneOrFail({ where: { id } });
+  }
+
+  async removeOne(id: number): Promise<User> {
+    const userToDelete = await this.usersRepository.findOneOrFail({
+      where: { id },
+    });
+    if (!userToDelete) {
+      throw new Error(`User with id: ${id} not found`);
+    }
+    await this.usersRepository.delete(id);
+    return userToDelete;
   }
 }

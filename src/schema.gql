@@ -2,22 +2,53 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Comment {
+  id: Int!
+  comment: String!
+}
+
+type Task {
+  id: Int!
+  title: String!
+  description: String!
+  owner: User!
+}
+
 type User {
   id: Int!
   name: String!
   email: String!
+  tasks: [Task!]!
 }
 
 type Query {
   users: [User!]!
   getOneUser(id: Int!): User!
+  tasks: [Task!]!
+  getOneTask(id: Int!): Task!
+  comments: [Comment!]!
+  comment(id: Int!): Comment!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
+  deleteUser(id: Int!): User!
+  createTask(createTasksInput: CreateTasksInput!): Task!
+  removeTask(id: Int!): Task!
+  addComment(createCommentsInput: CreateCommentsInput!): Comment!
 }
 
 input CreateUserInput {
   name: String!
   email: String!
+}
+
+input CreateTasksInput {
+  title: String!
+  description: String!
+  ownerId: Int
+}
+
+input CreateCommentsInput {
+  comment: String!
 }

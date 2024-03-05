@@ -6,7 +6,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/users.model';
+import { User } from './users/users.entity';
+import { TasksModule } from './tasks/tasks.module';
+import { Task } from './tasks/tasks.entity';
+import { CommentsModule } from './comments/comments.module';
+import { Comment } from './comments/comments.entity';
 
 @Module({
   imports: [
@@ -17,7 +21,7 @@ import { User } from './users/users.model';
       username: 'postgres',
       password: 'postgres',
       database: 'Nest_2',
-      entities: [User],
+      entities: [User, Task, Comment],
       synchronize: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -25,6 +29,8 @@ import { User } from './users/users.model';
       driver: ApolloDriver,
     }),
     UsersModule,
+    TasksModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
