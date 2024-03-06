@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Role {
+  id: Int!
+  roleName: String!
+  users: [User!]
+}
+
 type Comment {
   id: Int!
   comment: String!
@@ -21,11 +27,14 @@ type User {
   name: String!
   email: String!
   tasks: [Task!]!
+  role: Role
 }
 
 type Query {
   users: [User!]!
   getOneUser(id: Int!): User!
+  roles: [Role!]!
+  role(id: Int!): Role!
   tasks: [Task!]!
   getOneTask(id: Int!): Task!
   comments: [Comment!]!
@@ -35,6 +44,8 @@ type Query {
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   deleteUser(id: Int!): User!
+  removeRole(id: Int!): Role!
+  createRole(createRolesInput: CreateRolesInput!): Role!
   createTask(createTasksInput: CreateTasksInput!): Task!
   deleteTask(id: Int!): Task!
   addComment(createCommentsInput: CreateCommentsInput!): Comment!
@@ -43,6 +54,11 @@ type Mutation {
 input CreateUserInput {
   name: String!
   email: String!
+  roleId: Int
+}
+
+input CreateRolesInput {
+  roleName: String!
 }
 
 input CreateTasksInput {

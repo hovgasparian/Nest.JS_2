@@ -11,6 +11,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { Task } from './tasks/tasks.entity';
 import { CommentsModule } from './comments/comments.module';
 import { Comment } from './comments/comments.entity';
+import { RolesModule } from './roles/roles.module';
+import { Role } from './roles/roles.entity';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { Comment } from './comments/comments.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'Nest_2',
-      entities: [User, Task, Comment],
+      entities: [User, Task, Comment, Role],
       synchronize: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -31,6 +33,7 @@ import { Comment } from './comments/comments.entity';
     UsersModule,
     TasksModule,
     CommentsModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

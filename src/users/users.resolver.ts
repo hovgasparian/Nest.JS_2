@@ -21,8 +21,8 @@ export class UsersResolver {
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
-    const { name, email } = createUserInput;
-    return this.usersService.create(name, email);
+    const { name, email, roleId } = createUserInput;
+    return this.usersService.create(name, email, roleId);
   }
 
   @Mutation(() => User)
