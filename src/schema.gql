@@ -5,6 +5,7 @@
 type Comment {
   id: Int!
   comment: String!
+  tasks: [Task!]
 }
 
 type Task {
@@ -12,6 +13,7 @@ type Task {
   title: String!
   description: String!
   owner: User!
+  comments: [Comment!]
 }
 
 type User {
@@ -47,6 +49,7 @@ input CreateTasksInput {
   title: String!
   description: String!
   ownerId: Int
+  commentsId: Int
 }
 
 input CreateCommentsInput {

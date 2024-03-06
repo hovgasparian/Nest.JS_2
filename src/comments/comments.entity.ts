@@ -1,5 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Task } from 'src/tasks/tasks.entity';
 
 @Entity()
@@ -13,6 +19,8 @@ export class Comment {
   @Field()
   comment: string;
 
-  @ManyToOne(() => Task, (task) => task.comments)
-  task: Task;
+  @ManyToMany(() => Task, (task) => task.comments)
+  @JoinTable()
+  @Field(() => [Task], { nullable: true })
+  tasks: Task[];
 }

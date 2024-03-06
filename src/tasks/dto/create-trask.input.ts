@@ -1,6 +1,4 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-// import { CreateCommentsInput } from 'src/comments/dto/create-comment.input';
-// import { User } from 'src/users/users.entity';
 
 @InputType()
 export class CreateTasksInput {
@@ -12,4 +10,7 @@ export class CreateTasksInput {
 
   @Field(() => Int, { nullable: true })
   ownerId: number;
+
+  @Field(() => Int, {nullable: true})
+  commentsId: number
 }

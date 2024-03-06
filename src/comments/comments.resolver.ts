@@ -21,6 +21,7 @@ export class CommentsResolver {
   addComment(
     @Args('createCommentsInput') createCommentsInput: CreateCommentsInput,
   ): Promise<Comment> {
-    return this.commentsService.addNewComment(createCommentsInput);
+    const { comment } = createCommentsInput;
+    return this.commentsService.addNewComment(comment);
   }
 }

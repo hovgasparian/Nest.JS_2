@@ -6,8 +6,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToMany,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity()
@@ -26,10 +26,11 @@ export class Task {
   description: string;
 
   @ManyToOne(() => User, (user) => user.tasks)
-  @JoinColumn()
+  @JoinColumn() 
   @Field(() => User)
   owner: User;
 
-  @OneToMany(() => Comment, (comment) => comment.task)
+  @ManyToMany(() => Comment, (comment) => comment.tasks)
+  @Field(() => [Comment], {nullable: true})  
   comments: Comment[];
 }
