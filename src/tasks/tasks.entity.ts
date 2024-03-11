@@ -27,7 +27,7 @@ export class Task {
 
   @ManyToOne(() => User, (user) => user.tasks)
   @JoinColumn() 
-  @Field(() => User)
+  @Field(() => User, {nullable: true})
   owner: User;
 
   @ManyToMany(() => Comment, (comment) => comment.tasks)

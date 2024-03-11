@@ -5,13 +5,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { Task } from 'src/tasks/tasks.entity';
 import { RolesModule } from 'src/roles/roles.module';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from 'src/auth/jwt-strategy';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Task]),
     forwardRef(() => RolesModule),
+    JwtModule.register({
+      signOptions: { expiresIn: '24h' },
+      secret: 'hide-me',
+    }),
   ],
-  providers: [UsersService, UsersResolver],
+  providers: [UsersService, UsersResolver, JwtStrategy],
   exports: [UsersService],
 })
 export class UsersModule {}

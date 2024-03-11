@@ -28,6 +28,7 @@ import { Role } from './roles/roles.entity';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
       driver: ApolloDriver,
     }),
     UsersModule,

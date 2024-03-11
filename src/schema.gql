@@ -2,59 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Role {
-  id: Int!
-  roleName: String!
-  users: [User!]
-}
-
 type Comment {
-  id: Int!
   comment: String!
+  id: Int!
   tasks: [Task!]
 }
 
-type Task {
-  id: Int!
-  title: String!
-  description: String!
-  owner: User!
-  comments: [Comment!]
-}
-
-type User {
-  id: Int!
-  name: String!
-  email: String!
-  tasks: [Task!]!
-  role: Role
-}
-
-type Query {
-  users: [User!]!
-  getOneUser(id: Int!): User!
-  roles: [Role!]!
-  role(id: Int!): Role!
-  tasks: [Task!]!
-  getOneTask(id: Int!): Task!
-  comments: [Comment!]!
-  comment(id: Int!): Comment!
-}
-
-type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
-  deleteUser(id: Int!): User!
-  removeRole(id: Int!): Role!
-  createRole(createRolesInput: CreateRolesInput!): Role!
-  createTask(createTasksInput: CreateTasksInput!): Task!
-  deleteTask(id: Int!): Task!
-  addComment(createCommentsInput: CreateCommentsInput!): Comment!
-}
-
-input CreateUserInput {
-  name: String!
-  email: String!
-  roleId: Int
+input CreateCommentsInput {
+  comment: String!
 }
 
 input CreateRolesInput {
@@ -62,12 +17,67 @@ input CreateRolesInput {
 }
 
 input CreateTasksInput {
-  title: String!
+  commentsId: Int
   description: String!
   ownerId: Int
-  commentsId: Int
+  title: String!
 }
 
-input CreateCommentsInput {
-  comment: String!
+input CreateUserInput {
+  email: String!
+  name: String!
+  password: String!
+  roleId: Int
+}
+
+type LoginResponse {
+  access_token: String!
+  user: User!
+}
+
+type Mutation {
+  addComment(createCommentsInput: CreateCommentsInput!): Comment!
+  createRole(createRolesInput: CreateRolesInput!): Role!
+  createTask(createTasksInput: CreateTasksInput!): Task!
+  createUser(createUserInput: CreateUserInput!): User!
+  deleteTask(id: Int!): Task!
+  deleteUser(id: Int!): User!
+  login(loginInput: CreateUserInput!): LoginResponse!
+  removeRole(id: Int!): Role!
+  signUp(regInput: CreateUserInput!): User!
+}
+
+type Query {
+  comment(id: Int!): Comment!
+  comments: [Comment!]!
+  findByEmail(email: String!): User!
+  getOneTask(id: Int!): Task!
+  getOneUser(id: Int!): User!
+  role(id: Int!): Role!
+  roles: [Role!]!
+  tasks: [Task!]!
+  users: [User!]!
+}
+
+type Role {
+  id: Int!
+  roleName: String!
+  users: [User!]
+}
+
+type Task {
+  comments: [Comment!]
+  description: String!
+  id: Int!
+  owner: User
+  title: String!
+}
+
+type User {
+  email: String!
+  id: Int!
+  name: String!
+  password: String!
+  role: Role
+  tasks: [Task!]
 }

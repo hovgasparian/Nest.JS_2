@@ -25,12 +25,16 @@ export class User {
   @Field()
   email: string;
 
+  @Column()
+  @Field()
+  password: string;
+
   @OneToMany(() => Task, (task) => task.owner)
-  @Field(() => [Task])
+  @Field(() => [Task], { nullable: true })
   tasks: Task[];
 
   @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn()
-  @Field(() => Role, {nullable: true})
+  @Field(() => Role, { nullable: true })
   role: Role;
 }
