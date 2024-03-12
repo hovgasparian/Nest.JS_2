@@ -5,18 +5,23 @@ import { CreateUserInput } from './dto/create-user.input';
 import { LoginResponse } from './dto/login-response';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { Roles } from 'src/auth/role-auth.decorator';
+import { RolesGuard } from 'src/auth/roles-auth.guard';
+
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => [User])
-  @UseGuards(JwtAuthGuard)
+  @Roles("Admin")
+  @UseGuards(RolesGuard)
   users(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Query(() => User)
+  @UseGuards(JwtAuthGuard)
   getOneUser(@Args('id', { type: () => Int }) id: number): Promise<User> {
     return this.usersService.findOne(id);
   }

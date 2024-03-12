@@ -100,7 +100,12 @@ export class UsersService {
   }
 
   private async generateToken(user: User): Promise<string> {
-    const payLoad = { email: user.email, id: user.id, roles: user.role };
+    const payLoad = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+    };
     const token = this.jwtService.sign(payLoad);
     return token;
   }

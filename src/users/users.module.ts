@@ -7,6 +7,7 @@ import { Task } from 'src/tasks/tasks.entity';
 import { RolesModule } from 'src/roles/roles.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'src/auth/jwt-strategy';
+import { RolesGuard } from 'src/auth/roles-auth.guard';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { JwtStrategy } from 'src/auth/jwt-strategy';
       secret: 'hide-me',
     }),
   ],
-  providers: [UsersService, UsersResolver, JwtStrategy],
+  providers: [UsersService, UsersResolver, JwtStrategy, RolesGuard],
   exports: [UsersService],
 })
 export class UsersModule {}
