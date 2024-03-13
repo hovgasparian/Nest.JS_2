@@ -105,6 +105,7 @@ export class UsersService {
       name: user.name,
       email: user.email,
       password: user.password,
+      role: user.role,
     };
     const token = this.jwtService.sign(payLoad);
     return token;
