@@ -18,7 +18,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
     JwtModule.register({
       signOptions: { expiresIn: '24h' },
       secret: 'hide-me',
-      global: true
+      global: true,
     }),
   ],
   providers: [

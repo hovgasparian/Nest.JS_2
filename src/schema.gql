@@ -53,6 +53,7 @@ type Query {
   findByEmail(email: String!): User!
   getOneTask(id: Int!): Task!
   getOneUser(id: Int!): User!
+  getUserRole(name: String!): String!
   role(id: Int!): Role!
   roles: [Role!]!
   tasks: [Task!]!
@@ -61,7 +62,7 @@ type Query {
 
 type Role {
   id: Int!
-  roleName: String!
+  roleName: String
   users: [User!]
 }
 

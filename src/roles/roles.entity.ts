@@ -10,7 +10,7 @@ export class Role {
   id: number;
 
   @Column()
-  @Field()
+  @Field({ nullable: true })
   roleName: string;
 
   @OneToMany(() => User, (user) => user.role)

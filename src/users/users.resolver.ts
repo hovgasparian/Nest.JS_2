@@ -7,10 +7,13 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/auth/roles-auth.guard';
 import { Roles } from 'src/auth/role-auth.decorator';
+import { RolesService } from 'src/roles/roles.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
   @Roles('Admin')
   @UseGuards(RolesGuard)
@@ -30,12 +33,16 @@ export class UsersResolver {
     return this.usersService.findByEmail(email);
   }
 
+  @Query(() => String)
+  getUserRole(@Args('name') name: string): Promise<String | null> {
+    return this.usersService.getUserRole(name);
+  }
+  
   @Mutation(() => User)
   createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
+    @Args('createUserInput') userInput: CreateUserInput,
   ): Promise<User> {
-    const { name, email, password, roleId } = createUserInput;
-    return this.usersService.create(name, email, password, roleId);
+    return this.usersService.create(userInput);
   }
 
   @Mutation(() => User)
@@ -45,13 +52,13 @@ export class UsersResolver {
 
   @Mutation(() => User)
   signUp(@Args('regInput') createUserInput: CreateUserInput): Promise<User> {
-    const { name, email, password, roleId } = createUserInput;
-    return this.usersService.create(name, email, password, roleId);
+    return this.usersService.registration(createUserInput);
   }
 
   @Mutation(() => LoginResponse)
-  login(@Args('loginInput') createUserInput: CreateUserInput): Promise<any> {
-    const { name, email, password, roleId } = createUserInput;
-    return this.usersService.login(name, email, password, roleId);
+  login(
+    @Args('loginInput') createUserInput: CreateUserInput,
+  ): Promise<LoginResponse> {
+    return this.usersService.login(createUserInput);
   }
 }

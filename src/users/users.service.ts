@@ -1,14 +1,12 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserInput } from './dto/create-user.input';
+import { LoginResponse } from './dto/login-response';
+import { Role } from 'src/roles/roles.entity';
 
 @Injectable()
 export class UsersService {
@@ -17,18 +15,12 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(
-    name: string,
-    email: string,
-    password: string,
-    roleId?: number,
-  ): Promise<User> {
-    const hashPassword = await bcrypt.hash(password, 7);
+  async create(userInput: CreateUserInput): Promise<User> {
+    const hashPassword = await bcrypt.hash(userInput.password, 7);
     const user = this.usersRepository.create({
-      name,
-      email,
+      ...userInput,
       password: hashPassword,
-      role: { id: roleId },
+      role: { id: userInput.roleId },
       tasks: [],
     });
     return this.usersRepository.save(user);
@@ -63,65 +55,60 @@ export class UsersService {
     return userToDelete;
   }
 
-  async registration(
-    name: string,
-    email: string,
-    password: string,
-    roleId?: number,
-  ): Promise<User> {
-    const condidate = await this.usersRepository.findOneOrFail({
-      where: { email },
+  async getUserRole(name: string): Promise<string | null> {
+    const user = await this.usersRepository.findOne({
+      where: { name },
+    });
+    if (user && user.role) {
+      return user.role.roleName;
+    }
+    return null;
+  }
+
+  async registration(createUserInput: CreateUserInput): Promise<User> {
+    const condidate = await this.usersRepository.findOne({
+      where: { email: createUserInput.email },
     });
     if (condidate) {
-      throw new HttpException(`User already exist`, HttpStatus.BAD_REQUEST);
+      throw new Error(`User already exists`);
     }
-
-    const hashPassword = await bcrypt.hash(password, 7);
+    const hashPassword = await bcrypt.hash(createUserInput.password, 7);
     const user = this.usersRepository.create({
-      name,
-      email,
+      ...createUserInput,
       password: hashPassword,
-      role: { id: roleId },
+      role: { id: createUserInput.roleId },
       tasks: [],
     });
     return this.usersRepository.save(user);
   }
 
-  async login(name: string, email: string, password: string, roleId?: number) {
-    const user = this.usersRepository.findOne({ where: { email } });
-    if (!user) {
-      throw new Error('User not found');
+  async login(userInput: CreateUserInput): Promise<LoginResponse> {
+    const validatedUser = await this.validateUser(
+      userInput.email,
+      userInput.password,
+    );
+    if (!validatedUser) {
+      throw new Error('Invalid user');
     }
-    const validateUser = await this.validateUser(name, email, password, roleId);
+
+    const role = await this.getUserRole(validatedUser.name);
+
+    const payload = { email: validatedUser.email, role: role };
+
+    console.log(validatedUser.role);
+
+    const access_token = this.jwtService.sign(payload);
     return {
-      access_token: this.generateToken(validateUser),
-      user,
+      access_token,
+      user: validatedUser,
     };
   }
 
-  private async generateToken(user: User): Promise<string> {
-    const payLoad = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      role: user.role,
-    };
-    const token = this.jwtService.sign(payLoad);
-    return token;
-  }
-
-  async validateUser(
-    name: string,
-    email: string,
-    password: string,
-    roleId: number,
-  ) {
+  async validateUser(email: string, password: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { email } });
-    const passwordsEqual = await bcrypt.compare(password, user.password);
-    if (user && passwordsEqual) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       return user;
     }
-    throw new UnauthorizedException({ message: 'Incorrect email or password' });
+    return null;
   }
 }
