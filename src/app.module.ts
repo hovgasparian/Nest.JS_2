@@ -1,4 +1,4 @@
-import { Module, UseGuards } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -13,8 +13,6 @@ import { CommentsModule } from './comments/comments.module';
 import { Comment } from './comments/comments.entity';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/roles.entity';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/roles-auth.guard';
 
 @Module({
   imports: [
@@ -33,19 +31,12 @@ import { RolesGuard } from './auth/roles-auth.guard';
       sortSchema: true,
       driver: ApolloDriver,
     }),
-    
     UsersModule,
     TasksModule,
     CommentsModule,
     RolesModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

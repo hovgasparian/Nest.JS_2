@@ -8,7 +8,6 @@ import { RolesModule } from 'src/roles/roles.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'src/auth/jwt-strategy';
 import { RolesGuard } from 'src/auth/roles-auth.guard';
-import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Module({
@@ -17,7 +16,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
     forwardRef(() => RolesModule),
     JwtModule.register({
       signOptions: { expiresIn: '24h' },
-      secret: 'hide-me',
+      secret: 'secret_word',
       global: true,
     }),
   ],
@@ -27,10 +26,6 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
     JwtStrategy,
     JwtAuthGuard,
     RolesGuard,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
   ],
   exports: [UsersService],
 })

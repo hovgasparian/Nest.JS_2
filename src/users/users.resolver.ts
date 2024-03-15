@@ -6,18 +6,15 @@ import { LoginResponse } from './dto/login-response';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/auth/roles-auth.guard';
-import { Roles } from 'src/auth/role-auth.decorator';
-import { RolesService } from 'src/roles/roles.service';
+import { Roles } from 'src/auth/roles-auth.decorator';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  @Roles('Admin')
-  @UseGuards(RolesGuard)
   @Query(() => [User])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   users(): Promise<User[]> {
     return this.usersService.findAll();
   }
@@ -33,11 +30,6 @@ export class UsersResolver {
     return this.usersService.findByEmail(email);
   }
 
-  @Query(() => String)
-  getUserRole(@Args('name') name: string): Promise<String | null> {
-    return this.usersService.getUserRole(name);
-  }
-  
   @Mutation(() => User)
   createUser(
     @Args('createUserInput') userInput: CreateUserInput,

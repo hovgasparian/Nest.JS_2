@@ -6,12 +6,13 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from './dto/create-user.input';
 import { LoginResponse } from './dto/login-response';
-import { Role } from 'src/roles/roles.entity';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private rolesService: RolesService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -55,16 +56,6 @@ export class UsersService {
     return userToDelete;
   }
 
-  async getUserRole(name: string): Promise<string | null> {
-    const user = await this.usersRepository.findOne({
-      where: { name },
-    });
-    if (user && user.role) {
-      return user.role.roleName;
-    }
-    return null;
-  }
-
   async registration(createUserInput: CreateUserInput): Promise<User> {
     const condidate = await this.usersRepository.findOne({
       where: { email: createUserInput.email },
@@ -88,12 +79,16 @@ export class UsersService {
       userInput.password,
     );
     if (!validatedUser) {
-      throw new Error('Invalid user');
+      throw new Error(`User isn't authenticated`);
     }
 
-    const role = await this.getUserRole(validatedUser.name);
-
-    const payload = { email: validatedUser.email, role: role };
+    const payload = {
+      name: validatedUser.name,
+      email: validatedUser.email,
+      password: validatedUser.password,
+      tasks: validatedUser.tasks,
+      role: validatedUser.role,
+    };
 
     console.log(validatedUser.role);
 
@@ -105,7 +100,10 @@ export class UsersService {
   }
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      relations: ['role', 'tasks'],
+    });
     if (user && (await bcrypt.compare(password, user.password))) {
       return user;
     }
